@@ -1,13 +1,16 @@
 require 'csv'
+require 'pry'
 
 class Employee
 
-  @@list_of_employees = [] # array of employee objects
+  @@list_of_employees = {} # array of employee objects
   attr_reader :last_name
+  attr_accessor :total_sales
   def initialize(first_name, last_name, base_salary)
     @first_name = first_name
     @last_name = last_name
     @base_salary = base_salary
+    @total_sales = 0
   end
 
   def gross_salary
@@ -18,16 +21,26 @@ class Employee
     # calculates gross salary + bonuses - taxes
   end
 
-  def gross_sales(sale)
+  def gross_sales
     # Link between sales and employee
   end
 
-  def self.add_employee(employee)
-    @@list_of_employees << employee
-  end
+  class << self
+    def top_salesperson
+      @@list_of_employees.sort_by{|name, employee| employee.total_sales }.last
+    end
 
-  def self.list_of_employees
-    @@list_of_employees
+    def add_sale(sale)
+      @@list_of_employees[sale.last_name].total_sales += sale.gross_sale_value
+    end
+
+    def add_employee(employee)
+      @@list_of_employees[employee.last_name] = employee
+    end
+
+    def list_of_employees
+      @@list_of_employees
+    end
   end
 end
 
@@ -60,23 +73,22 @@ class Owner < Employee
     super(first_name, last_name, base_salary)
     @bonus = bonus
     @goal = goal
+    binding.pry
   end
 end
 
 class Sale
   @@employee_and_sales = {}
-  def initialize(last_name, gross_sale_value)
-    @last_name = last_name
-    @gross_sale_value = gross_sale_value
+  attr_reader :last_name, :gross_sale_value
+
+  def initialize(data)
+    @last_name = data["last_name"]
+    @gross_sale_value = data["gross_sale_value"].to_i
   end
 
   def self.all_sales(file)
     CSV.foreach(file, headers: true) do |row|
-      if @@employee_and_sales[row["last_name"]] == nil
-        @@employee_and_sales[row["last_name"]] = row["gross_sale_value"].to_i # Sale objects instead of just prices?
-      else
-        @@employee_and_sales[row["last_name"]] += (row["gross_sale_value"].to_i)
-      end
+      Employee.add_sale(Sale.new(row.to_hash))
     end
   end
 
