@@ -21,10 +21,6 @@ class Employee
     # calculates gross salary + bonuses - taxes
   end
 
-  def gross_sales
-    # Link between sales and employee
-  end
-
   class << self
     def top_salesperson
       @@list_of_employees.sort_by{|name, employee| employee.total_sales }.last
@@ -73,12 +69,10 @@ class Owner < Employee
     super(first_name, last_name, base_salary)
     @bonus = bonus
     @goal = goal
-    binding.pry
   end
 end
 
 class Sale
-  @@employee_and_sales = {}
   attr_reader :last_name, :gross_sale_value
 
   def initialize(data)
@@ -91,11 +85,6 @@ class Sale
       Employee.add_sale(Sale.new(row.to_hash))
     end
   end
-
-  def self.employee_and_sales
-    @@employee_and_sales
-  end
-
 end
 
 # read employee csv to populate all employees
