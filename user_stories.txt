@@ -1,0 +1,19 @@
+As an owner
+I want to tabulate monthly payroll
+So that I know how much to pay my employees
+
+As a quota salesperson
+I want to calculate my total gross sales
+So that I can determine whether I will receive a bonus
+
+As a commissioned salesperson
+I want to calculate the commission percentage of my gross sales
+So that I can determine my bonus
+
+As an owner
+I want to calculate the monthly gross sales
+So that I know whether or not I receive a bonus
+
+As an employee
+I want to how much tax I owe
+So that I know what my net pay
