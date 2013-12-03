@@ -1,11 +1,11 @@
 require 'csv'
-require 'pry'
 
 class Employee
+  @@list_of_employees = {}
 
-  @@list_of_employees = {} # array of employee objects
   attr_reader :last_name, :first_name, :base_salary
   attr_accessor :total_sales
+
   def initialize(first_name, last_name, base_salary)
     @first_name = first_name
     @last_name = last_name
@@ -23,7 +23,7 @@ class Employee
 
   class << self
     def top_salesperson
-      @@list_of_employees.sort_by{|name, employee| employee.total_sales }.last
+      @@list_of_employees.sort_by { |name, employee| employee.total_sales }.last
     end
 
     def add_sale(sale)
@@ -53,7 +53,6 @@ class CommissionSalesPerson < Employee
   def commission
     @total_sales * @commision_percentage
   end
-
 end
 
 class QuotaSalesPerson < Employee
@@ -82,7 +81,6 @@ class QuotaSalesPerson < Employee
       0
     end
   end
-
 end
 
 class Owner < Employee
@@ -135,8 +133,6 @@ class Sale
   end
 end
 
-# read employee csv to populate all employees
-# populate designers
 CSV.foreach('employee.csv', headers: true) do |row|
   Employee.add_employee(Employee.new(row["first"], row["last"], row["base"].to_f))
 end
@@ -146,11 +142,10 @@ end
 CSV.foreach('quota_employee.csv', headers: true) do |row|
   Employee.add_employee(QuotaSalesPerson.new(row["first"], row["last"], row["base"].to_f, row["bonus"].to_f, row["goal"].to_f))
 end
-CSV.foreach('owner.csv', headers: true) do |row| # Is the owner an employee?
+CSV.foreach('owner.csv', headers: true) do |row|
   Employee.add_employee(Owner.new(row["first"], row["last"], row["base"].to_f, row["bonus"].to_f, row["goal"].to_f))
 end
 Sale.all_sales('sales.csv')
-
 
 Employee.list_of_employees.each do |last_name, employee|
   puts "***#{employee.first_name} #{employee.last_name}***"
@@ -158,5 +153,4 @@ Employee.list_of_employees.each do |last_name, employee|
   puts "Commission: $#{sprintf("%.2f", employee.commission)}" if employee.respond_to?(:commission)
   puts "Net Pay: $#{sprintf("%.2f", employee.net_pay)}"
   puts "***\n\n"
-  end
-
+end
