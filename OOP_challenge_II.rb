@@ -18,7 +18,7 @@ class Employee
   end
 
   def net_pay
-    # calculates gross salary + bonuses - taxes
+    gross_salary * 0.70
   end
 
   class << self
@@ -47,7 +47,7 @@ class CommissionSalesPerson < Employee
   end
 
   def gross_salary
-    @base_salary
+    @base_salary + commission
   end
 
   def commission
@@ -153,10 +153,10 @@ Sale.all_sales('sales.csv')
 
 
 Employee.list_of_employees.each do |last_name, employee|
-  puts "#{employee.first_name} #{employee.last_name}"
-  puts "Gross Salary: #{employee.base_salary}"
-  # require 'pry'
-  # binding.pry
-  puts "Commission: #{employee.commission}" if employee.respond_to?(:commission)
+  puts "***#{employee.first_name} #{employee.last_name}***"
+  puts "Gross Salary: $#{sprintf("%.2f", employee.base_salary)}"
+  puts "Commission: $#{sprintf("%.2f", employee.commission)}" if employee.respond_to?(:commission)
+  puts "Net Pay: $#{sprintf("%.2f", employee.net_pay)}"
+  puts "***\n\n"
   end
 
