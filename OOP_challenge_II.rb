@@ -6,10 +6,10 @@ class Employee
   attr_reader :last_name, :first_name, :base_salary
   attr_accessor :total_sales
 
-  def initialize(first_name, last_name, base_salary)
-    @first_name = first_name
-    @last_name = last_name
-    @base_salary = base_salary / 12
+  def initialize(data)
+    @first_name = data['first']
+    @last_name = data['last']
+    @base_salary = data['base'].to_f / 12
     @total_sales = 0
   end
 
@@ -41,9 +41,9 @@ class Employee
 end
 
 class CommissionSalesPerson < Employee
-  def initialize(first_name, last_name, base_salary, commision_percentage)
-    super(first_name, last_name, base_salary)
-    @commision_percentage = commision_percentage
+  def initialize(data)
+    super
+    @commision_percentage = data['percentage'].to_f
   end
 
   def gross_salary
@@ -56,10 +56,10 @@ class CommissionSalesPerson < Employee
 end
 
 class QuotaSalesPerson < Employee
-  def initialize(first_name, last_name, base_salary, bonus, goal)
-    super(first_name, last_name, base_salary)
-    @bonus = bonus
-    @goal = goal
+  def initialize(data)
+    super
+    @bonus = data['bonus'].to_f
+    @goal = data['goal'].to_f
   end
 
   def gross_salary
@@ -84,10 +84,10 @@ class QuotaSalesPerson < Employee
 end
 
 class Owner < Employee
-  def initialize(first_name, last_name, base_salary, bonus, goal)
-    super(first_name, last_name, base_salary)
-    @bonus = bonus
-    @goal = goal
+  def initialize(data)
+    super
+    @bonus = data['bonus'].to_f
+    @goal = data['goal'].to_f
     @company_sales = 0
   end
 
@@ -134,16 +134,16 @@ class Sale
 end
 
 CSV.foreach('employee.csv', headers: true) do |row|
-  Employee.add_employee(Employee.new(row["first"], row["last"], row["base"].to_f))
+  Employee.add_employee(Employee.new(row.to_hash))
 end
 CSV.foreach('commission_employee.csv', headers: true) do |row|
-  Employee.add_employee(CommissionSalesPerson.new(row["first"], row["last"], row["base"].to_f, row["percentage"].to_f))
+  Employee.add_employee(CommissionSalesPerson.new(row.to_hash))
 end
 CSV.foreach('quota_employee.csv', headers: true) do |row|
-  Employee.add_employee(QuotaSalesPerson.new(row["first"], row["last"], row["base"].to_f, row["bonus"].to_f, row["goal"].to_f))
+  Employee.add_employee(QuotaSalesPerson.new(row.to_hash))
 end
 CSV.foreach('owner.csv', headers: true) do |row|
-  Employee.add_employee(Owner.new(row["first"], row["last"], row["base"].to_f, row["bonus"].to_f, row["goal"].to_f))
+  Employee.add_employee(Owner.new(row.to_hash))
 end
 Sale.all_sales('sales.csv')
 
